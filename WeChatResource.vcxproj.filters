@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="CAutoFunction.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatRecord.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatRoomOperate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="config.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dllhijack.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FriendList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Function.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="InitWeChat.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Login.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="rpcutil_s.cpp">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="threadpool.cpp">
+      <Filter>threadpool</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CAutoFunction.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatRecord.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatRoomOperate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dllhijack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FriendList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="InitWeChat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Login.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="message.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="weixin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="rpcutil_s.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="threadpool.h">
+      <Filter>threadpool</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="def.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{2a9f8933-4318-44b2-831a-69da91c6ef24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{dc4833d3-8ebf-487c-811f-762889ebef47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc">
+      <UniqueIdentifier>{cdaca441-1c1e-4ed0-8986-4e72eec6479c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="threadpool">
+      <UniqueIdentifier>{053c5bb1-0bd8-4dc2-9831-251166232eb8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
