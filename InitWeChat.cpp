@@ -5,6 +5,8 @@
 #pragma comment(lib,"Version.lib")
 #include "message.h"
 #include "offset.h"
+#include "InitWeChat.h"
+
 using namespace std;
 
 
@@ -35,7 +37,7 @@ BOOL IsWxVersionValid()
 	if (iVerInfoSize != 0) {
 		char* pBuf = new char[iVerInfoSize];
 		if (GetFileVersionInfo(VersionFilePath, 0, iVerInfoSize, pBuf)) {
-			if (VerQueryValue(pBuf, TEXT("\\"), (void**)& pVsInfo, &iFileInfoSize)) {
+			if (VerQueryValue(pBuf, TEXT("\\"), (void**)&pVsInfo, &iFileInfoSize)) {
 				//主版本2.6.7.57
 				//2
 				int s_major_ver = (pVsInfo->dwFileVersionMS >> 16) & 0x0000FFFF;
@@ -74,32 +76,23 @@ BOOL IsWxVersionValid()
 // 参    数: void
 // 返 回 值: void
 //************************************************************
-void CheckIsLogin()
+int CheckIsLogin()
 {
 	//获取WeChatWin的基址
 	DWORD  dwWeChatWinAddr = (DWORD)GetModuleHandle(L"WeChatWin.dll");
 
-	while (true)
+	DWORD dwIsLogin = dwWeChatWinAddr + LoginSign_Offset + 0x194;
+	if (*(DWORD*)dwIsLogin != 0)
 	{
-		DWORD dwIsLogin = dwWeChatWinAddr + LoginSign_Offset + 0x194;
-		if (*(DWORD*)dwIsLogin != 0)
+		//查找登陆窗口句柄
+		HWND hLogin = FindWindow(NULL, L"Login");
+		if (hLogin == NULL)
 		{
-			//查找登陆窗口句柄
-			HWND hLogin = FindWindow(NULL, L"Login");
-			if (hLogin == NULL)
-			{
-				MessageBoxA(NULL, "未查找到Login窗口", "错误", MB_OK);
-				return;
-			}
-			COPYDATASTRUCT login_msg;
-			login_msg.dwData = WM_Login;
-			login_msg.lpData = NULL;
-			login_msg.cbData = 0;
-			//发送消息给控制端
-			SendMessage(hLogin, WM_COPYDATA, (WPARAM)hLogin, (LPARAM)&login_msg);
-			break;
+			return 2;
 		}
+		return 1;
 	}
+	return 0;
 }
 
 

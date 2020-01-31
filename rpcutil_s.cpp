@@ -85,6 +85,12 @@ struct dummy {
 		HookChatRecord();
 		return 0;
 	}
+
+	// 检查是否已经登陆
+	int IsLogin(rpc_conn conn)
+	{
+		return CheckIsLogin();
+	}
 };
 
 
@@ -120,6 +126,7 @@ int StartSDKServer()
 		server->register_handler("HookGetPeoples", &dummy::HookGetPeoples, &d);
 		server->register_handler("GetPeoples", &dummy::GetPeoples, &d);
 		server->register_handler("HookMsgReceive", &dummy::HookMsgReceive, &d);
+		server->register_handler("IsLogin", &dummy::IsLogin, &d);
 		// 启动RPC服务
 		server->run();
 	}

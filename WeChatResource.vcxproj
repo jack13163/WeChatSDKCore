@@ -164,7 +164,6 @@
     <ClInclude Include="ChatRoomOperate.h" />
     <ClInclude Include="FriendList.h" />
     <ClInclude Include="Function.h" />
-    <ClInclude Include="InitWeChat.h" />
     <ClInclude Include="Login.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="message.h" />
@@ -181,7 +180,6 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FriendList.cpp" />
     <ClCompile Include="Function.cpp" />
-    <ClCompile Include="InitWeChat.cpp" />
     <ClCompile Include="Login.cpp" />
     <ClCompile Include="rpcutil_s.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
