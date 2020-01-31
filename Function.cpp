@@ -28,7 +28,7 @@ struct Information
 // 作    者: GuiShou
 // 时    间: 2019/7/7
 // 参    数: void
-// 返 回 值: void 
+// 返 回 值: void
 //************************************************************
 void GetInformation()
 {

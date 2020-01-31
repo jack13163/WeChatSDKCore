@@ -12,24 +12,12 @@ using namespace rpc_service;
 #include "Login.h"
 #include "FriendList.h"
 #include "Function.h"
+#include "ChatRecord.h"
 #include <list>
+#include "../WeChatSDK/openwechat.h"
 
 
 using namespace std;
-
-typedef tuple <
-	//wxid1
-	wstring,
-	//wxName
-	wstring,
-	//v1
-	wstring,
-	//nickName
-	wstring
-> USER_INFO;
-
-//定义7000个用户列表
-list<USER_INFO> userInfoList(1);
 
 
 // 服务列表
@@ -79,21 +67,32 @@ struct dummy {
 	}
 
 	// HOOK获取好友列表
-	int HOOKGetPeoples(rpc_conn conn)
+	int HookGetPeoples(rpc_conn conn)
 	{
 		HookGetFriendList();
 		return 0;
 	}
 
 	// 获取好友列表
-	list<USER_INFO> GetPeoples(rpc_conn conn)
+	string GetPeoples(rpc_conn conn)
 	{
-		return GetFriendList();
+		return GetUserInfoList();
 	}
 
+	// Hook接受消息
+	int HookMsgReceive(rpc_conn conn)
+	{
+		HookChatRecord();
+		return 0;
+	}
 };
 
 
+// 端口列表【需要RPC服务端和客户端保持一致】
+int ports[] = { 9000, 8866, 7777, 5555, 6666,9958,7765 };
+
+// 当前端口
+int currentPort = -1;
 
 // api接口
 dummy d;
@@ -104,9 +103,13 @@ rpc_server* server;
 // 开启RPC服务
 int StartSDKServer()
 {
+	if (currentPort < 0) 
+	{
+		currentPort = ports[numberOfWechat() - 1];
+	}
 	try
 	{
-		server = new rpc_server(9000, std::thread::hardware_concurrency());
+		server = new rpc_server(currentPort, std::thread::hardware_concurrency());
 		// 注册远程调用方法
 		server->register_handler("add", &dummy::add, &d);
 		server->register_handler("GetQrCode", &dummy::GetQrCode, &d);
@@ -114,8 +117,9 @@ int StartSDKServer()
 		server->register_handler("SendTextMsg", &dummy::SendTextMsg, &d);
 		server->register_handler("DeletePeople", &dummy::DeletePeople, &d);
 		server->register_handler("AddPeople", &dummy::AddPeople, &d);
-		server->register_handler("HOOKGetPeoples", &dummy::HOOKGetPeoples, &d);
+		server->register_handler("HookGetPeoples", &dummy::HookGetPeoples, &d);
 		server->register_handler("GetPeoples", &dummy::GetPeoples, &d);
+		server->register_handler("HookMsgReceive", &dummy::HookMsgReceive, &d);
 		// 启动RPC服务
 		server->run();
 	}

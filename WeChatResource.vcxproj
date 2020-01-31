@@ -162,32 +162,22 @@
     <ClInclude Include="CAutoFunction.h" />
     <ClInclude Include="ChatRecord.h" />
     <ClInclude Include="ChatRoomOperate.h" />
-    <ClInclude Include="config.h" />
-    <ClInclude Include="dllhijack.h" />
     <ClInclude Include="FriendList.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="InitWeChat.h" />
     <ClInclude Include="Login.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="message.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="rpcutil_s.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="threadpool.h" />
     <ClInclude Include="util.h" />
-    <ClInclude Include="version.h" />
-    <ClInclude Include="weixin.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CAutoFunction.cpp" />
     <ClCompile Include="ChatRecord.cpp" />
     <ClCompile Include="ChatRoomOperate.cpp" />
-    <ClCompile Include="config.cpp" />
-    <ClCompile Include="dllhijack.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FriendList.cpp" />
     <ClCompile Include="Function.cpp" />

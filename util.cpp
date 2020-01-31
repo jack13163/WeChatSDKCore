@@ -1,5 +1,13 @@
 #include "stdafx.h"
 #include "util.h"
+#include <string>
+#include <locale>
+#include <codecvt>
+#include <windows.h>
+#include <tlhelp32.h>	//进程快照函数头文件
+#include <stdio.h>
+
+using namespace std;
 
 bool GetFileVersion(LPTSTR lpszFilePath, LPTSTR version)
 {
@@ -154,4 +162,62 @@ char* wchar2char(const wchar_t* wchar)
     WideCharToMultiByte(CP_ACP, 0, wchar, wcslen(wchar), m_char, len, NULL, NULL);
     m_char[len] = '\0';
     return m_char;
+}
+
+// 中文string则采用：
+string chswstring2string(const wstring& wstr)
+{
+    string result;
+    int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+    if (len <= 0)return result;
+    char* buffer = new char[len + 1];
+    if (buffer == NULL)return result;
+    WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
+    buffer[len] = '\0';
+    result.append(buffer);
+    delete[] buffer;
+    return result;
+}
+
+wstring chsstring2wstring(const string& str)
+{
+    wstring result;
+    int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), NULL, 0);
+    if (len < 0)return result;
+    wchar_t* buffer = new wchar_t[len + 1];
+    if (buffer == NULL)return result;
+    MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), buffer, len);
+    buffer[len] = '\0';
+    result.append(buffer);
+    delete[] buffer;
+    return result;
+}
+
+
+// 获取微信进程的个数
+int numberOfWechat()
+{
+    int countProcess = 0;                                    //当前进程数量计数变量
+    PROCESSENTRY32 currentProcess;                        //存放快照进程信息的一个结构体
+    currentProcess.dwSize = sizeof(currentProcess);        //在使用这个结构之前，先设置它的大小
+    HANDLE hProcess = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);//给系统内的所有进程拍一个快照
+
+    if (hProcess == INVALID_HANDLE_VALUE)
+    {
+        printf("CreateToolhelp32Snapshot()调用失败!\n");
+        return -1;
+    }
+
+    bool bMore = Process32First(hProcess, &currentProcess);    //获取第一个进程信息
+    while (bMore)
+    {
+        if (strcmp(wchar2char(currentProcess.szExeFile), "WeChat.exe") == 0)
+        {
+            countProcess++;
+        }
+        bMore = Process32Next(hProcess, &currentProcess);    //遍历下一个
+    }
+
+    CloseHandle(hProcess);    //清除hProcess句柄
+    return countProcess;
 }

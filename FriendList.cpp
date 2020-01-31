@@ -15,28 +15,15 @@
 #include "message.h"
 #include "offset.h"
 #include <windows.h>
+#include "util.h"
 
 
 #pragma comment(lib, "Version.lib")
 using namespace std;
 
-// 临界区   
-CRITICAL_SECTION g_cs;
 
-
-typedef tuple <
-	//wxid1
-	wstring,
-	//wxName
-	wstring,
-	//v1
-	wstring,
-	//nickName
-	wstring
-> USER_INFO;
-
-//定义7000个用户列表
-list<USER_INFO> userInfoList(1);
+//定义用户信息列表
+static list<USER_INFO> userInfoList;
 
 
 //用户信息结构体
@@ -99,6 +86,46 @@ DWORD r_esi = 0;
 
 
 //************************************************************
+// 函数名称: GetFriendList
+// 函数说明: 获取好友列表
+// 作    者: Jack
+// 时    间: 2019/7/4
+// 参    数: void
+// 返 回 值: void 
+//************************************************************
+string GetUserInfoList()
+{
+	string result = "";
+	int count = 0;
+	for (auto& userInfoOld : userInfoList)
+	{
+		wstring id = get<0>(userInfoOld);
+		wstring number = get<1>(userInfoOld);
+		wstring nickname = get<2>(userInfoOld);
+		wstring remark = get<3>(userInfoOld);
+
+		result += "id: ";
+		result += chswstring2string(id).data();
+		result += "\n";
+		result += "number: ";
+		result += chswstring2string(number).data();
+		result += "\n";
+		result += "nickname: ";
+		result += chswstring2string(nickname).data();
+		result += "\n";
+		result += "remark: ";
+		result += chswstring2string(remark).data();
+		result += "\n\n";
+		count++;
+	}
+	result.append("共：");
+	result.append(to_string(count));
+	result.append("条记录.");
+	return result;
+}
+
+
+//************************************************************
 // 函数名称: HookGetFriendList
 // 函数说明: HOOK获取好友列表的call 
 // 作    者: GuiShou
@@ -139,9 +166,6 @@ void HookGetFriendList()
 
 	// 执行完了操作之后需要进行还原
 	VirtualProtect((LPVOID)hookAddress, 5, OldProtext, &OldProtext);
-
-	// 初始化临界区
-	InitializeCriticalSection(&g_cs);
 }
 
 
@@ -195,8 +219,8 @@ __declspec(naked) void GetUserListInfo()
 		pushf
 	}
 
-	//调用接收消息的函数
-	SendUserListInfo();
+	//调用保存好友列表的函数
+	SaveUserListInfo();
 
 	//恢复现场
 	__asm
@@ -214,88 +238,39 @@ __declspec(naked) void GetUserListInfo()
 
 
 //************************************************************
-// 函数名称: ReSendUser
-// 函数说明: 输出好友信息
-// 作    者: GuiShou
-// 时    间: 2019/7/4
-// 参    数: user
-// 返 回 值: void 
-//************************************************************
-void ReSendUser(UserInfo* user)
-{
-	EnterCriticalSection(&g_cs);//申请进入临界区
-
-	//ofstream ofile;
-	//ofile.open("C:/Users/Administrator/Desktop/myfile.txt", ios::app);
-
-	string r = "id: ";
-	r.append(wchar2char((wchar_t*)&user->UserId));
-	r.append("\n");
-	r.append("nickname: ");
-	r.append(wchar2char((wchar_t*)&user->UserNickName));
-	r.append("\n");
-	r.append("number: ");
-	r.append(wchar2char((wchar_t*)&user->UserNumber));
-	r.append("\n");
-	r.append("remark: ");
-	r.append(wchar2char((wchar_t*)&user->UserRemark));
-	r.append("\n");
-
-	SendTextMessage(char2wchar("filehelper"), char2wchar(r.data()));
-
-	//ofile << r << endl;
-	//ofile.flush();
-	//ofile.close();
-
-	LeaveCriticalSection(&g_cs);//释放临界区资源
-}
-
-
-//************************************************************
-// 函数名称: SendUserListInfo
-// 函数说明: 发送好友列表
+// 函数名称: SaveUserListInfo
+// 函数说明: 保存好友列表
 // 作    者: GuiShou
 // 时    间: 2019/7/4
 // 参    数: void
 // 返 回 值: void 
 //************************************************************
-void SendUserListInfo()
+void SaveUserListInfo()
 {
-	//个人微信号、群号
-	wstring wxid1 = GetMsgByAddress(r_esi + 0x10);
-	wstring wxName = GetMsgByAddress(r_esi + 0x8C);
-	wstring v1 = GetMsgByAddress(r_esi + 0x58);
-	//个人微信昵称、群昵称
-	wstring nickName = GetMsgByAddress(r_esi + 0x8C);
-	USER_INFO userInfo(wxid1, wxName, v1, nickName);
-
-	for (auto& userInfoOld : userInfoList)
-	{
-		wstring wxid = get<0>(userInfoOld);
-		// 判断是否当前用户已经存在，若存在，则直接返回
-		if (wxid == wxid1)
-		{
-			return;
-		}
-	}
-	userInfoList.push_front(userInfo);
-
+	// 微信信息
 	UserInfo* user = new UserInfo;
 	LPVOID pUserWxid = *((LPVOID*)(r_esi + 0x10));
 	LPVOID pUserNumber = *((LPVOID*)(r_esi + 0x44));
 	LPVOID pUserNick = *((LPVOID*)(r_esi + 0x8C));
 	LPVOID pUserReMark = *((LPVOID*)(r_esi + 0x78));
-
+	
 	swprintf_s(user->UserId, L"%s", (wchar_t*)pUserWxid);
 	swprintf_s(user->UserNumber, L"%s", (wchar_t*)pUserNumber);
 	swprintf_s(user->UserNickName, L"%s", (wchar_t*)pUserNick);
 	swprintf_s(user->UserRemark, L"%s", (wchar_t*)pUserReMark);
+	USER_INFO userInfo(user->UserId, user->UserNumber, user->UserNickName, user->UserRemark);
 
-	// 输出联系人信息
-	CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ReSendUser, user, 0, NULL);
+	for (auto& userInfoOld : userInfoList)
+	{
+		wstring wxid = get<0>(userInfoOld);
+		// 判断是否当前用户已经存在，若存在，则直接返回
+		if (wxid == user->UserId)
+		{
+			return;
+		}
+	}
+	userInfoList.push_back(userInfo);
 }
-
-
 
 //************************************************************
 // 函数名称: SendTextMessage
